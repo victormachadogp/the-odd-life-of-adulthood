@@ -12,6 +12,8 @@ Os planos e decisoes de arquitetura do projeto estao em `docs/`:
 
 - **[plano-i18n-modular.md](docs/plano-i18n-modular.md)** — Plano para extrair strings de UI (hoje hardcoded nos componentes) para `locales/` com i18n modular e type-safe. Corresponde a Fase 3 da RFC.
 
+- **[governanca-anti-entropia.md](docs/governanca-anti-entropia.md)** — Praticas para manter a entropia baixa conforme o projeto cresce: padroes, convencoes, testes, code review, fronteiras claras (DDD leve), observabilidade e ownership de dominios.
+
 ## Backlog de Ferramentas de Analytics e Observabilidade
 
 ### VWO (Visual Website Optimizer)

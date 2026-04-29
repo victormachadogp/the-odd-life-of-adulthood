@@ -61,7 +61,15 @@ Isso não é só uma convenção de pastas — é uma decisão arquitetural. Sig
 
 **Por que `src/` inteiro e não só os componentes?** Porque o router, os hooks, o provider de tema, os loaders — tudo isso é framework-específico. TanStack Router é React. `import.meta.glob` é Vite. `useContext` é React. Nada disso sobrevive uma troca de framework. O que sobrevive são os dados que esses mecanismos consomem.
 
-### 2.4 Contracts (Contratos / Interfaces)
+### 2.4 Entropia Arquitetural
+
+O conceito que unifica todos os princípios acima: **entropia é perda de previsibilidade**. Cada decisão arquitetural neste projeto (separar content de src, usar t() pra strings, centralizar identidade em config) é uma restrição intencional que reduz o espaço de possibilidades.
+
+Sem restrições, cada mudança no projeto pode introduzir variações imprevisíveis. Com restrições explícitas, o sistema permanece previsível conforme cresce.
+
+As práticas concretas para manter a entropia baixa — padrões, convenções, testes, code review, ownership de domínios — estão documentadas em `docs/governanca-anti-entropia.md`.
+
+### 2.5 Contracts (Contratos / Interfaces)
 
 Um contrato é um acordo entre duas partes sobre a forma dos dados que trafegam entre elas. Em TypeScript, isso são `interfaces`. Em arquitetura, é mais amplo — inclui: que dados existem, que formato têm, como são acessados, e o que o consumidor deve fazer com eles.
 
@@ -322,13 +330,19 @@ Se alguém (humano ou AI) mudar a interface `Comic` sem atualizar `contracts/typ
 
 **Mitigação:** `contracts/types.ts` pode ser importado pelos adapters. Assim, se o contrato mudar, o TypeScript força os adapters a se adaptarem. Mas os `pages/*.md` são markdown puro — não têm validação automática. Disciplina novamente, ou um script de validação (ver abaixo).
 
-### 6.5 Over-engineering pra 4 comics
+### 6.5 Entropia organizacional conforme o projeto cresce
+
+Se o projeto escalar e não houver práticas explícitas de governança, a arquitetura modular por si só não previne caos. Padrões precisam ser mantidos ativamente.
+
+**Mitigação:** Práticas documentadas em `docs/governanca-anti-entropia.md` — padrões de estrutura, convenções de naming, testes de validação, e checklist de review. Seguir desde agora, mesmo solo, cria o hábito antes de precisar.
+
+### 6.6 Over-engineering pra 4 comics
 
 O projeto hoje tem 4 comics e ~10 componentes. A arquitetura modular completa é proporcionalmente pesada. O risco é gastar mais tempo organizando do que criando conteúdo.
 
 **Mitigação:** Implementação incremental. As fases 1-3 (content, config, i18n) trazem valor imediato (código mais limpo, sem strings hardcoded). As fases 4-5 (contracts, brief) só valem quando você for de fato regenerar layouts com AI. Não precisa fazer tudo de uma vez.
 
-### 6.6 Server-side rendering e data fetching
+### 6.7 Server-side rendering e data fetching
 
 Hoje o site usa TanStack Start que suporta SSR. Se trocar pra um framework SSR-first (Nuxt, Astro), os adapters podem precisar funcionar tanto no servidor quanto no cliente. `import.meta.glob` é Vite-only e roda em build time. Em Nuxt, os dados viriam de server routes ou do Nuxt Content module.
 
