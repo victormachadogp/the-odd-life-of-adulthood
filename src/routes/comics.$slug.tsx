@@ -1,7 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Heart, MessageCircle, Share2 } from "lucide-react";
-import authorAvatar from "@/assets/author-avatar.jpg";
-import { comics, getComic } from "@/data/comics";
+import { format, parseISO } from "date-fns";
+import { comics, getComic } from "@/data/content-loader";
+
+const authorAvatar = "/media/author-avatar.jpg";
 
 export const Route = createFileRoute("/comics/$slug")({
   loader: ({ params }) => {
@@ -17,8 +19,8 @@ export const Route = createFileRoute("/comics/$slug")({
             { name: "description", content: loaderData.excerpt },
             { property: "og:title", content: `${loaderData.title} — Inkwell` },
             { property: "og:description", content: loaderData.excerpt },
-            { property: "og:image", content: loaderData.image },
-            { name: "twitter:image", content: loaderData.image },
+            { property: "og:image", content: loaderData.coverImage },
+            { name: "twitter:image", content: loaderData.coverImage },
           ],
         }
       : { meta: [{ title: "Comic — Inkwell" }] },
@@ -62,7 +64,7 @@ function ComicPage() {
       <header className="brutal-border mb-8 bg-card">
         <div className="brutal-border-b flex items-center justify-between bg-foreground px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-background">
           <span className="text-primary">FILE №{String(idx + 1).padStart(3, "0")}</span>
-          <span>{comic.date} / {comic.readingTime}</span>
+          <span>{format(parseISO(comic.date), "MMM d, yyyy")} / {comic.readingTime}</span>
         </div>
         <div className="space-y-4 p-6">
           <div className="flex flex-wrap items-center gap-1.5">
@@ -92,7 +94,7 @@ function ComicPage() {
       {/* Comic image — vertical reading */}
       <div className="brutal-border bg-card" style={{ boxShadow: "10px 10px 0 0 var(--ink)" }}>
         <img
-          src={comic.image}
+          src={comic.coverImage}
           alt={comic.title}
           width={768}
           height={1536}

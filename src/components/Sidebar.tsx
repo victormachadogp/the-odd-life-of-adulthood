@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import authorAvatar from "@/assets/author-avatar.jpg";
-import { allTags } from "@/data/comics";
+import { allTags } from "@/data/content-loader";
+
+const authorAvatar = "/media/author-avatar.jpg";
 
 interface SidebarProps {
   onSearch?: (q: string) => void;

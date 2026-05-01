@@ -46,6 +46,7 @@ Cada quadrinho pode ter múltiplas páginas/painéis em `pages/` (01.jpg, 02.jpg
 {
   "$schema": "../../comic.schema.json",
   "title": "An Honest Break for Coffee",
+  "type": "comic",
   "date": "2026-04-22",
   "excerpt": "A sleepy cat discovers the bittersweet truth about caffeine.",
   "pages": ["pages/01.jpg", "pages/02.jpg", "pages/03.jpg"],
@@ -54,6 +55,7 @@ Cada quadrinho pode ter múltiplas páginas/painéis em `pages/` (01.jpg, 02.jpg
 }
 ```
 
+- `type` é opcional — `"comic"` (padrão, pode omitir) ou `"art"` (arte avulsa: imagem única, sem múltiplos painéis). O layout usa esse campo para renderização e filtros diferentes
 - `pages` é um array ordenado de imagens — a **primeira é a capa/thumbnail**
 - Datas em ISO 8601 (`YYYY-MM-DD`) — formatação é responsabilidade do layout
 - Paths relativos dentro da mesma pasta do quadrinho
@@ -80,10 +82,11 @@ Cada quadrinho pode ter múltiplas páginas/painéis em `pages/` (01.jpg, 02.jpg
 export interface Comic {
   slug: string;
   title: string;
-  date: string;       // ISO 8601
+  type: "comic" | "art"; // "comic" é o padrão; "art" = arte avulsa (imagem única)
+  date: string;          // ISO 8601
   excerpt: string;
-  pages: string[];    // URLs das páginas resolvidas (/comics/<slug>/pages/01.jpg, ...)
-  coverImage: string; // URL da primeira página (atalho para pages[0])
+  pages: string[];       // URLs das páginas resolvidas (/comics/<slug>/pages/01.jpg, ...)
+  coverImage: string;    // URL da primeira página (atalho para pages[0])
   tags: string[];
   readingTime: string;
 }
@@ -112,6 +115,11 @@ export interface Comic {
 - Criar `scripts/sync-content.mjs` (copia imagens de `content/` para `public/comics/`)
 - Atualizar scripts do `package.json`: `dev` e `build` rodam sync antes
 - Adicionar `public/comics/` ao `.gitignore`
+
+**Por que esse script existe:**
+O Vite só serve arquivos estáticos de `public/` — ele não enxerga `content/`. Sem o sync, as URLs `/comics/<slug>/pages/01.jpg` retornam 404. O script é a ponte entre a fonte da verdade (`content/`, portável) e o que o servidor consegue servir (`public/`, gerado).
+
+`public/comics/` fica no `.gitignore` porque é pasta gerada — não faz sentido commitá-la. Qualquer dev ou pipeline de CI roda `npm run dev` ou `npm run build` e o sync acontece automaticamente.
 
 ### Step 3: Camada adaptadora
 - Criar `src/data/comic.types.ts`

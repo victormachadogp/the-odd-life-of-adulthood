@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Clock } from "lucide-react";
-import type { Comic } from "@/data/comics";
+import { format, parseISO } from "date-fns";
+import type { Comic } from "@/data/comic.types";
 
 interface Props {
   comic: Comic;
@@ -21,7 +22,7 @@ export function ComicCard({ comic, index = 0 }: Props) {
         <div className="flex items-center justify-between brutal-border-b bg-background px-4 py-2 text-[10px] font-bold uppercase tracking-widest">
           <span className="text-primary">FILE №{String(index + 1).padStart(3, "0")}</span>
           <span className="text-foreground">
-            {comic.date} · <Clock className="inline h-3 w-3" /> {comic.readingTime}
+            {format(parseISO(comic.date), "MMM d, yyyy")} · <Clock className="inline h-3 w-3" /> {comic.readingTime}
           </span>
         </div>
 
@@ -29,12 +30,12 @@ export function ComicCard({ comic, index = 0 }: Props) {
         <div className="brutal-border-b bg-background p-3 md:p-4">
           <div className="brutal-border overflow-hidden bg-secondary">
             <img
-              src={comic.image}
+              src={comic.coverImage}
               alt={comic.title}
               loading="lazy"
               width={768}
               height={1536}
-              className="mx-auto block max-h-[560px] w-auto object-contain grayscale transition-smooth group-hover:grayscale-0"
+              className="mx-auto block max-h-[560px] w-auto object-contain transition-smooth"
             />
           </div>
         </div>

@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../comic.schema.json",
+  "title": "Dragon Bakes Cookies",
+  "type": "comic",
+  "date": "2026-04-11",
+  "excerpt": "Turns out fire breath has a learning curve.",
+  "pages": ["pages/01.jpg"],
+  "tags": ["fantasy", "comedy", "cooking"],
+  "readingTime": "2 min"
+}

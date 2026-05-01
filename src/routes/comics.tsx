@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { ComicCard } from "@/components/ComicCard";
 import { Sidebar } from "@/components/Sidebar";
-import { comics } from "@/data/comics";
+import { comics } from "@/data/content-loader";
 
 export const Route = createFileRoute("/comics")({
   head: () => ({

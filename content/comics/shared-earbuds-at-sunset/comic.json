@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../comic.schema.json",
+  "title": "Shared Earbuds at Sunset",
+  "type": "comic",
+  "date": "2026-04-04",
+  "excerpt": "Two friends, one song, the whole evening.",
+  "pages": ["pages/01.jpg"],
+  "tags": ["slice-of-life", "friendship"],
+  "readingTime": "2 min"
+}

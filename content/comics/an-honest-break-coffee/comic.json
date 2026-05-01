@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../comic.schema.json",
+  "title": "An Honest Break for Coffee",
+  "type": "comic",
+  "date": "2026-04-22",
+  "excerpt": "A sleepy cat discovers the bittersweet truth about caffeine.",
+  "pages": ["pages/01.jpg"],
+  "tags": ["slice-of-life", "cats", "mornings"],
+  "readingTime": "2 min"
+}

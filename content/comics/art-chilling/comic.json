@@ -1,0 +1,9 @@
+{
+  "$schema": "../../../comic.schema.json",
+  "title": "Chilling",
+  "type": "art",
+  "date": "2026-05-01",
+  "excerpt": "",
+  "pages": ["pages/01.jpeg"],
+  "tags": ["illustration"]
+}

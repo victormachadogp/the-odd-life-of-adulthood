@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { ArrowDown } from "lucide-react";
 import { ComicCard } from "@/components/ComicCard";
 import { Sidebar } from "@/components/Sidebar";
-import { comics } from "@/data/comics";
+import { comics } from "@/data/content-loader";
 
 const artBackground = "/media/art-background.png";
 

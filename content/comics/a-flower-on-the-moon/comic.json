@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../comic.schema.json",
+  "title": "A Flower on the Moon",
+  "type": "comic",
+  "date": "2026-04-18",
+  "excerpt": "An astronaut plants something small in a very big place.",
+  "pages": ["pages/01.jpg"],
+  "tags": ["sci-fi", "soft", "wholesome"],
+  "readingTime": "3 min"
+}
