@@ -4,7 +4,8 @@ import { ArrowDown } from "lucide-react";
 import { ComicCard } from "@/components/ComicCard";
 import { Sidebar } from "@/components/Sidebar";
 import { comics } from "@/data/comics";
-import artBackground from "@/assets/art-background.png";
+
+const artBackground = "/media/art-background.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({

@@ -68,7 +68,7 @@ Cada quadrinho pode ter múltiplas páginas/painéis em `pages/` (01.jpg, 02.jpg
 - Componentes referenciam como `/comics/<slug>/pages/01.jpg` (URL simples)
 - Na listagem (cards), usa-se a primeira página como thumbnail
 - Na página de detalhe, mostra todas as páginas em sequência
-- `art-background.png` e `author-avatar.jpg` ficam em `src/assets/` (são assets de UI, não conteúdo)
+- `author-avatar.jpg` e assets de arte decorativa (ex: `art-background.png`) ficam em `public/media/` — fora de `src/` para sobreviver uma troca de framework, referenciados como URLs estáticas (`/media/art-background.png`)
 - Adicionar `public/comics/` ao `.gitignore` (são arquivos gerados)
 
 ---
