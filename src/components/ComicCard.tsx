@@ -35,7 +35,10 @@ export function ComicCard({ comic, index = 0 }: Props) {
               loading="lazy"
               width={768}
               height={1536}
-              className="mx-auto block max-h-[560px] w-auto object-contain transition-smooth"
+              className={comic.type === "art"
+                ? "w-full h-auto transition-smooth"
+                : "mx-auto block max-h-140 w-auto object-contain transition-smooth"
+              }
             />
           </div>
         </div>

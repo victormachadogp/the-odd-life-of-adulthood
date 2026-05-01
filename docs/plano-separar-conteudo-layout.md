@@ -70,6 +70,10 @@ Cada quadrinho pode ter múltiplas páginas/painéis em `pages/` (01.jpg, 02.jpg
 - Componentes referenciam como `/comics/<slug>/pages/01.jpg` (URL simples)
 - Na listagem (cards), usa-se a primeira página como thumbnail
 - Na página de detalhe, mostra todas as páginas em sequência
+- O campo `type` do `comic.json` define o comportamento visual do card:
+  - `"comic"` (padrão) — imagem com altura limitada e `object-contain` (preserva proporção, fundo neutro nas laterais)
+  - `"art"` — imagem com `w-full h-auto` (largura total, altura natural, sem corte)
+  - Esse é um contrato entre o conteúdo e o layout: qualquer componente de card deve respeitar essa distinção
 - `author-avatar.jpg` e assets de arte decorativa (ex: `art-background.png`) ficam em `public/media/` — fora de `src/` para sobreviver uma troca de framework, referenciados como URLs estáticas (`/media/art-background.png`)
 - Adicionar `public/comics/` ao `.gitignore` (são arquivos gerados)
 
