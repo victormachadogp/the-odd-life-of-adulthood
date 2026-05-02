@@ -48,3 +48,48 @@ Tanto GitHub Pages quanto Vercel entendem o output do Vite. O `index.html` gerad
 Imagens em `public/comics/slug/pages/01.jpg` não passam pelo Vite — são URLs estáticas, sem hash. Se uma imagem for atualizada, um usuário com cache pode ver a versão antiga por um tempo. Na prática, para um site com poucos comics e atualizações esporádicas, não é um problema real. Se o projeto crescer, o `sync-content.mjs` pode ser expandido para gerar hashes nos nomes ao copiar.
 
 ---
+
+## CI: separar validação de qualidade do build de deploy
+
+**Contexto:** Ao criar o primeiro CI do projeto, a dúvida era: rodar build a cada push? Isso é lento e desnecessário quando o objetivo é só garantir qualidade do código.
+
+**Decisão tomada:**
+Dois workflows separados com propósitos distintos:
+
+1. **CI automático** (push para main) — só valida qualidade: lint, format check, type check. Rápido, roda a cada commit.
+2. **Release manual** (workflow_dispatch) — builda, tageia, gera artifact. Só quando o dev decide que está pronto pra deployar.
+
+**Por que não buildar a cada push:**
+Build é a operação mais pesada do pipeline. Se o projeto compila mas tem um erro de lint, você gastou minutos de CI à toa. Validações de qualidade (lint, format, types) pegam 90% dos problemas em segundos. Build fica reservado pro momento de "quero colocar no ar".
+
+**Proteção na release:**
+O workflow de release roda os mesmos checks de qualidade como job prerequisito (`needs: quality`). Se lint/format/types falhar, o build nem começa. Isso garante que nenhuma release saia com código sujo, sem duplicar lógica — o job `quality` é o mesmo nos dois workflows.
+
+---
+
+## Versionamento: CalVer com era para projetos pessoais
+
+**Contexto:** Qual padrão de versionamento faz sentido para um site pessoal que não é consumido como lib por terceiros?
+
+**Opções avaliadas:**
+
+| Padrão | Quando faz sentido |
+|--------|-------------------|
+| SemVer (`2.4.1`) | Libs/APIs públicas — consumidores precisam saber se podem atualizar sem quebrar |
+| CalVer (`2026.05.02`) | Quando o tempo importa mais que compatibilidade |
+| Release train (`v1.1433.7`) | SaaS com times grandes e release trains regulares |
+| Contador simples (`v1, v2, v3`) | Quando só precisa de rastreabilidade mínima |
+
+**Decisão tomada:** `v1.2026.05.02` — combina era + data.
+
+- `v1` = "era" do projeto (stack atual: TanStack/React). Quando reescrever o front, vira `v2`.
+- `2026.05.02` = CalVer, diz exatamente quando a release foi feita.
+- Se houver 2 releases no mesmo dia: `v1.2026.05.02.2`.
+
+**Por que não SemVer:**
+SemVer carrega uma garantia de compatibilidade (MAJOR = breaking change). Num site pessoal acessado pelo browser, não existe consumidor externo que depende de uma versão. Todo deploy é "a última versão". SemVer seria teatro semântico.
+
+**Quando o v1 vira v2:**
+Quando o conteúdo (`content/`) sobrevive mas o front é reescrito em outra stack. O número marca uma mudança de era, não uma breaking change no sentido de API.
+
+---

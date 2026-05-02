@@ -7,8 +7,35 @@ permissions:
   contents: write
 
 jobs:
+  quality:
+    name: Lint, Format & Types
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npx prettier --check .
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Tests
+        run: npm test
+
   release:
     name: Build & Tag
+    needs: quality
     runs-on: ubuntu-latest
 
     steps:
@@ -41,10 +68,38 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Create tag
+      - name: Generate CHANGELOG
         run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          PREV_TAG=$(git tag --sort=-creatordate -l "v1.*" | head -n 1)
+
+          echo "# $TAG" > changelog_entry.md
+          echo "" >> changelog_entry.md
+
+          if [ -z "$PREV_TAG" ]; then
+            git log --pretty=format:"- %s > [%h](${REPO_URL}/commit/%H)" >> changelog_entry.md
+          else
+            git log --pretty=format:"- %s > [%h](${REPO_URL}/commit/%H)" "$PREV_TAG"..HEAD >> changelog_entry.md
+          fi
+
+          echo "" >> changelog_entry.md
+          echo "" >> changelog_entry.md
+
+          if [ -f CHANGELOG.md ]; then
+            cat CHANGELOG.md >> changelog_entry.md
+          fi
+
+          mv changelog_entry.md CHANGELOG.md
+
+      - name: Commit CHANGELOG & create tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG for ${{ steps.version.outputs.tag }}"
           git tag ${{ steps.version.outputs.tag }}
-          git push origin ${{ steps.version.outputs.tag }}
+          git push origin main --tags
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
