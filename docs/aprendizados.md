@@ -32,7 +32,7 @@ Se o asset for descartável junto com o layout (ícones SVG inline, imagens de p
 Browsers guardam arquivos estáticos em cache — depois de baixar `logo.png` uma vez, o browser usa a cópia local por dias ou semanas sem verificar se mudou no servidor. Isso é bom pra performance (site carrega rápido), mas cria um problema: se você atualizar `logo.png` no servidor, o usuário continua vendo a versão antiga porque o browser nem foi buscar.
 
 **A solução do Vite: hash no nome**
-O Vite gera um código baseado no *conteúdo* do arquivo e coloca no nome:
+O Vite gera um código baseado no _conteúdo_ do arquivo e coloca no nome:
 
 ```
 logo.png  →  logo.Xk92mB3a.png   (versão 1)
@@ -56,14 +56,17 @@ Imagens em `public/comics/slug/pages/01.jpg` não passam pelo Vite — são URLs
 **Decisão tomada:**
 Dois workflows separados com propósitos distintos:
 
-1. **CI automático** (push para main) — só valida qualidade: lint, format check, type check. Rápido, roda a cada commit.
-2. **Release manual** (workflow_dispatch) — builda, tageia, gera artifact. Só quando o dev decide que está pronto pra deployar.
+1. **CI automático** (push para main) — valida qualidade: lint, format check, type check, testes. Rápido, roda a cada commit.
+2. **Release manual** (workflow_dispatch) — roda quality checks, builda, gera CHANGELOG, tageia, cria GitHub Release. Só quando o dev decide que está pronto pra deployar.
 
 **Por que não buildar a cada push:**
-Build é a operação mais pesada do pipeline. Se o projeto compila mas tem um erro de lint, você gastou minutos de CI à toa. Validações de qualidade (lint, format, types) pegam 90% dos problemas em segundos. Build fica reservado pro momento de "quero colocar no ar".
+Build é a operação mais pesada do pipeline. Se o projeto compila mas tem um erro de lint, você gastou minutos de CI à toa. Validações de qualidade (lint, format, types, testes) pegam 90% dos problemas em segundos. Build fica reservado pro momento de "quero colocar no ar".
 
 **Proteção na release:**
-O workflow de release roda os mesmos checks de qualidade como job prerequisito (`needs: quality`). Se lint/format/types falhar, o build nem começa. Isso garante que nenhuma release saia com código sujo, sem duplicar lógica — o job `quality` é o mesmo nos dois workflows.
+O workflow de release roda os mesmos checks de qualidade como job prerequisito (`needs: quality`). Se lint/format/types/testes falhar, o build nem começa. Isso garante que nenhuma release saia com código sujo.
+
+**CHANGELOG automático:**
+A cada release, o workflow lista todos os commits desde a última tag e adiciona no `CHANGELOG.md` com link pro commit no GitHub. O commit do CHANGELOG e a tag são criados num push só (`git push origin main --tags`).
 
 ---
 
@@ -73,12 +76,12 @@ O workflow de release roda os mesmos checks de qualidade como job prerequisito (
 
 **Opções avaliadas:**
 
-| Padrão | Quando faz sentido |
-|--------|-------------------|
-| SemVer (`2.4.1`) | Libs/APIs públicas — consumidores precisam saber se podem atualizar sem quebrar |
-| CalVer (`2026.05.02`) | Quando o tempo importa mais que compatibilidade |
-| Release train (`v1.1433.7`) | SaaS com times grandes e release trains regulares |
-| Contador simples (`v1, v2, v3`) | Quando só precisa de rastreabilidade mínima |
+| Padrão                          | Quando faz sentido                                                              |
+| ------------------------------- | ------------------------------------------------------------------------------- |
+| SemVer (`2.4.1`)                | Libs/APIs públicas — consumidores precisam saber se podem atualizar sem quebrar |
+| CalVer (`2026.05.02`)           | Quando o tempo importa mais que compatibilidade                                 |
+| Release train (`v1.1433.7`)     | SaaS com times grandes e release trains regulares                               |
+| Contador simples (`v1, v2, v3`) | Quando só precisa de rastreabilidade mínima                                     |
 
 **Decisão tomada:** `v1.2026.05.02` — combina era + data.
 
