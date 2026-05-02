@@ -21,6 +21,7 @@ Se o usuário trouxer só as imagens, pergunte cada campo antes de continuar.
 ### 1. Definir o slug
 
 O slug é o nome da pasta e a URL do quadrinho. Regras:
+
 - Tudo minúsculo
 - Palavras separadas por hífen
 - Sem acentos ou caracteres especiais
@@ -36,6 +37,7 @@ content/comics/<slug>/
 ```
 
 Crie com:
+
 ```bash
 mkdir -p content/comics/<slug>/pages
 ```
@@ -43,6 +45,7 @@ mkdir -p content/comics/<slug>/pages
 ### 3. Colocar as imagens
 
 Imagens vão em `content/comics/<slug>/pages/` nomeadas em sequência:
+
 - `01.jpg`, `02.jpg`, `03.jpg`... para quadrinhos com múltiplos painéis
 - `01.jpg` (ou `.jpeg`, `.png`) para arte avulsa ou quadrinho de página única
 
@@ -68,6 +71,7 @@ Crie `content/comics/<slug>/comic.json`:
 ```
 
 Notas:
+
 - `type` pode ser omitido se for `comic` (é o padrão)
 - `readingTime` pode ser omitido para `art`
 - `pages` deve listar todas as imagens em ordem

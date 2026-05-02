@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Search } from "lucide-react";
-import { allTags } from "@/data/content-loader";
+import { useState } from 'react';
+import { Search } from 'lucide-react';
+import { allTags } from '@/data/content-loader';
 
-const authorAvatar = "/media/author-avatar.jpg";
+const authorAvatar = '/media/author-avatar.jpg';
 
 interface SidebarProps {
   onSearch?: (q: string) => void;
@@ -11,7 +11,7 @@ interface SidebarProps {
   onTagChange?: (tag: string | null) => void;
 }
 
-export function Sidebar({ onSearch, query = "", selectedTag = null, onTagChange }: SidebarProps) {
+export function Sidebar({ onSearch, query = '', selectedTag = null, onTagChange }: SidebarProps) {
   const [internal, setInternal] = useState(query);
 
   return (
@@ -48,10 +48,10 @@ export function Sidebar({ onSearch, query = "", selectedTag = null, onTagChange 
           <button
             onClick={() => onTagChange?.(null)}
             className={
-              "flex items-center justify-between border-b border-foreground/30 px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-smooth " +
+              'flex items-center justify-between border-b border-foreground/30 px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-smooth ' +
               (selectedTag === null
-                ? "bg-primary text-primary-foreground"
-                : "bg-card hover:bg-foreground hover:text-background")
+                ? 'bg-primary text-primary-foreground'
+                : 'bg-card hover:bg-foreground hover:text-background')
             }
           >
             <span>★ All strips</span>
@@ -62,15 +62,15 @@ export function Sidebar({ onSearch, query = "", selectedTag = null, onTagChange 
               key={tag}
               onClick={() => onTagChange?.(tag === selectedTag ? null : tag)}
               className={
-                "flex items-center justify-between px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-smooth " +
-                (i !== allTags.length - 1 ? "border-b border-foreground/30 " : "") +
+                'flex items-center justify-between px-4 py-2.5 text-xs font-bold uppercase tracking-widest transition-smooth ' +
+                (i !== allTags.length - 1 ? 'border-b border-foreground/30 ' : '') +
                 (selectedTag === tag
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-card hover:bg-foreground hover:text-background")
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-card hover:bg-foreground hover:text-background')
               }
             >
               <span>#{tag}</span>
-              <span className="opacity-60">[{String(i + 1).padStart(2, "0")}]</span>
+              <span className="opacity-60">[{String(i + 1).padStart(2, '0')}]</span>
             </button>
           ))}
         </div>
@@ -89,11 +89,13 @@ export function Sidebar({ onSearch, query = "", selectedTag = null, onTagChange 
               width={56}
               height={56}
               className="h-14 w-14 brutal-border object-cover"
-              style={{ borderColor: "var(--background)" }}
+              style={{ borderColor: 'var(--background)' }}
             />
             <div>
               <p className="text-base font-extrabold uppercase leading-tight">Mira Okafor</p>
-              <p className="text-[10px] uppercase tracking-widest text-background/70">Cartoonist · LX</p>
+              <p className="text-[10px] uppercase tracking-widest text-background/70">
+                Cartoonist · LX
+              </p>
             </div>
           </div>
           <p className="mt-4 text-xs uppercase tracking-wider text-background/80">

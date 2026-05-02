@@ -82,21 +82,23 @@ Cada quadrinho pode ter múltiplas páginas/painéis em `pages/` (01.jpg, 02.jpg
 ## Camada Adaptadora
 
 ### `src/data/comic.types.ts` — Interface do Comic (contrato)
+
 ```typescript
 export interface Comic {
   slug: string;
   title: string;
-  type: "comic" | "art"; // "comic" é o padrão; "art" = arte avulsa (imagem única)
-  date: string;          // ISO 8601
+  type: 'comic' | 'art'; // "comic" é o padrão; "art" = arte avulsa (imagem única)
+  date: string; // ISO 8601
   excerpt: string;
-  pages: string[];       // URLs das páginas resolvidas (/comics/<slug>/pages/01.jpg, ...)
-  coverImage: string;    // URL da primeira página (atalho para pages[0])
+  pages: string[]; // URLs das páginas resolvidas (/comics/<slug>/pages/01.jpg, ...)
+  coverImage: string; // URL da primeira página (atalho para pages[0])
   tags: string[];
   readingTime: string;
 }
 ```
 
 ### `src/data/content-loader.ts` — Único arquivo que conhece a estrutura do conteúdo
+
 - Usa `import.meta.glob` do Vite para ler os JSONs em build time
 - Extrai o slug do path da pasta
 - Resolve os caminhos das páginas para `/comics/<slug>/pages/01.jpg` etc.
@@ -110,12 +112,14 @@ export interface Comic {
 ## Steps de Implementação
 
 ### Step 1: Criar estrutura de conteúdo
+
 - Criar `content/comic.schema.json`
 - Criar pastas em `content/comics/` para cada quadrinho
 - Criar os 4 `comic.json` com dados migrados de `src/data/comics.ts`
 - Copiar imagens de `src/assets/comic-*.jpg` para `content/comics/<slug>/pages/01.jpg`
 
 ### Step 2: Script de sync de imagens
+
 - Criar `scripts/sync-content.mjs` (copia imagens de `content/` para `public/comics/`)
 - Atualizar scripts do `package.json`: `dev` e `build` rodam sync antes
 - Adicionar `public/comics/` ao `.gitignore`
@@ -126,10 +130,12 @@ O Vite só serve arquivos estáticos de `public/` — ele não enxerga `content/
 `public/comics/` fica no `.gitignore` porque é pasta gerada — não faz sentido commitá-la. Qualquer dev ou pipeline de CI roda `npm run dev` ou `npm run build` e o sync acontece automaticamente.
 
 ### Step 3: Camada adaptadora
+
 - Criar `src/data/comic.types.ts`
 - Criar `src/data/content-loader.ts` com `import.meta.glob`
 
 ### Step 4: Atualizar consumers
+
 - `src/routes/index.tsx` — trocar import de `comics` para `content-loader`
 - `src/routes/comics.tsx` — idem
 - `src/routes/comics.$slug.tsx` — idem
@@ -138,6 +144,7 @@ O Vite só serve arquivos estáticos de `public/` — ele não enxerga `content/
 - Adicionar formatação de data com `date-fns` onde datas são exibidas
 
 ### Step 5: Limpeza
+
 - Remover `src/data/comics.ts`
 - Remover `src/assets/comic-*.jpg` (manter `art-background.png` e `author-avatar.jpg`)
 
@@ -155,14 +162,14 @@ O Vite só serve arquivos estáticos de `public/` — ele não enxerga `content/
 
 ## Arquivos Críticos
 
-| Arquivo | Ação |
-|---|---|
-| `src/data/comics.ts` | Será substituído e removido |
-| `src/routes/index.tsx` | Atualizar imports |
-| `src/routes/comics.tsx` | Atualizar imports |
-| `src/routes/comics.$slug.tsx` | Atualizar imports + formatação de data |
-| `src/components/ComicCard.tsx` | Atualizar import do tipo |
-| `src/components/Sidebar.tsx` | Atualizar import de tags |
-| `package.json` | Adicionar script de sync |
-| `vite.config.ts` | Possivelmente ajustar se glob não resolver |
-| `.gitignore` | Adicionar `public/comics/` |
+| Arquivo                        | Ação                                       |
+| ------------------------------ | ------------------------------------------ |
+| `src/data/comics.ts`           | Será substituído e removido                |
+| `src/routes/index.tsx`         | Atualizar imports                          |
+| `src/routes/comics.tsx`        | Atualizar imports                          |
+| `src/routes/comics.$slug.tsx`  | Atualizar imports + formatação de data     |
+| `src/components/ComicCard.tsx` | Atualizar import do tipo                   |
+| `src/components/Sidebar.tsx`   | Atualizar import de tags                   |
+| `package.json`                 | Adicionar script de sync                   |
+| `vite.config.ts`               | Possivelmente ajustar se glob não resolver |
+| `.gitignore`                   | Adicionar `public/comics/`                 |

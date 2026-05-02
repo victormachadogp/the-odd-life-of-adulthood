@@ -9,6 +9,7 @@ O site "The Odd Life of Adulthood" tem todas as strings de UI hardcoded nos comp
 3. **Organização limpa** — cada módulo tem seu arquivo de locale, fácil de manter
 
 **Decisões já tomadas:**
+
 - Idioma default: **pt-BR** (site será traduzido para português)
 - Troca de idioma: **backlog** — só monta a arquitetura, sem toggle ou language switching por agora
 - Complementa o plano existente de separação de conteúdo (`docs/plano-separar-conteudo-layout.md`) — dados dos comics ficam em `content/`, strings de UI ficam em `locales/`
@@ -81,24 +82,28 @@ Interpolação simples com `{var}` — o `t()` faz replace de `{year}`, `{count}
 ## Implementação Core
 
 ### `src/i18n/load-locale.ts`
+
 - Usa `import.meta.glob('../../locales/**/*.json', { eager: true })` para carregar os JSONs em build time
 - Filtra pelo locale atual (hardcoded `pt-BR` por agora)
 - Merge todos os módulos em um único `Record<string, string>` flat
 - Exporta `loadMessages(locale: string)`
 
 ### `src/i18n/context.tsx`
+
 - `I18nProvider` com React context (mesmo padrão do `ThemeProvider.tsx` existente)
 - Expõe `t(key, vars?)` — lookup no record + replace de `{var}`
 - Expõe `locale` (readonly por agora)
 - Hook `useTranslation()` retorna `{ t, locale }`
 
 ### `src/i18n/index.ts`
+
 ```typescript
 export { I18nProvider, useTranslation } from './context';
 export type { TranslationKey } from './keys';
 ```
 
 ### `scripts/generate-i18n-types.ts`
+
 - Lê todos os JSONs em `locales/pt-BR/`
 - Extrai todas as chaves
 - Gera `src/i18n/keys.d.ts` com union type `TranslationKey`
@@ -109,6 +114,7 @@ export type { TranslationKey } from './keys';
 ## Steps de Implementação
 
 ### Step 1: Criar estrutura de locales e popular pt-BR
+
 - Criar `locales/pt-BR/common.json` — extrair strings de `SiteHeader.tsx`, `SiteFooter.tsx`, `__root.tsx`
 - Criar `locales/pt-BR/home.json` — extrair de `index.tsx`
 - Criar `locales/pt-BR/comics.json` — extrair de `comics.tsx` e `comics.$slug.tsx`
@@ -117,20 +123,24 @@ export type { TranslationKey } from './keys';
 - Criar `locales/en/` com placeholders (mesmas chaves, valores em inglês atual)
 
 ### Step 2: Script de geração de tipos
+
 - Criar `scripts/generate-i18n-types.ts`
 - Adicionar script `"i18n:types"` no `package.json`
 - Encadear nos scripts `dev` e `build`
 
 ### Step 3: Core i18n (`src/i18n/`)
+
 - Criar `load-locale.ts` com `import.meta.glob`
 - Criar `context.tsx` com `I18nProvider` e `useTranslation`
 - Criar `index.ts` com exports públicos
 
 ### Step 4: Integrar no app shell
+
 - Modificar `src/routes/__root.tsx` — wrappear com `I18nProvider`
 - Setar `<html lang="pt-BR">`
 
 ### Step 5: Migrar componentes (incremental)
+
 - `SiteHeader.tsx` — navItems usam `t('nav.home')` etc.
 - `SiteFooter.tsx` — tagline, copyright, seção headers
 - `index.tsx` — hero, marquee, feed section
@@ -142,6 +152,7 @@ export type { TranslationKey } from './keys';
 - `contact.tsx` — form labels, validação
 
 ### Step 6: Script de validação de paridade de locales
+
 - Criar `scripts/validate-locales.ts` — lê todos os JSONs de `locales/pt-BR/` (locale de referência) e compara com cada outro locale (`en/`, e futuros)
 - Para cada locale secundário, verifica:
   - **Chaves faltando** — existem em pt-BR mas não no locale alvo
@@ -152,6 +163,7 @@ export type { TranslationKey } from './keys';
 - Integrar na pipeline de CI para rodar em todo PR — garante que nenhuma tradução fique pra trás quando alguém adicionar uma chave nova em pt-BR
 
 ### Step 7: Limpeza
+
 - Confirmar que nenhuma string de UI está hardcoded nos componentes
 - Rodar build para verificar types
 
@@ -161,11 +173,11 @@ export type { TranslationKey } from './keys';
 
 Os dois planos são **complementares e independentes** — podem ser implementados em qualquer ordem:
 
-| Camada | Onde vive | O que contém |
-|--------|-----------|-------------|
-| Conteúdo (comics) | `content/comics/` | Títulos, excerpts, tags, imagens dos quadrinhos |
-| Strings de UI | `locales/` | Labels, botões, textos de navegação, mensagens |
-| Layout | `src/routes/` + `src/components/` | Componentes React (regeneráveis por AI) |
+| Camada            | Onde vive                         | O que contém                                    |
+| ----------------- | --------------------------------- | ----------------------------------------------- |
+| Conteúdo (comics) | `content/comics/`                 | Títulos, excerpts, tags, imagens dos quadrinhos |
+| Strings de UI     | `locales/`                        | Labels, botões, textos de navegação, mensagens  |
+| Layout            | `src/routes/` + `src/components/` | Componentes React (regeneráveis por AI)         |
 
 O `t()` é **só para UI**. Dados dos comics passam direto do content loader.
 
@@ -173,31 +185,32 @@ O `t()` é **só para UI**. Dados dos comics passam direto do content loader.
 
 ## Arquivos Críticos a Modificar
 
-| Arquivo | Ação |
-|---------|------|
-| `src/routes/__root.tsx` | Adicionar `I18nProvider`, setar `lang="pt-BR"` |
-| `src/components/SiteHeader.tsx` | Migrar navItems para `t()` |
-| `src/components/SiteFooter.tsx` | Migrar strings para `t()` |
-| `src/routes/index.tsx` | Migrar hero, marquee, feed strings |
-| `src/routes/comics.tsx` | Migrar headers e filtros |
-| `src/routes/comics.$slug.tsx` | Migrar labels e navegação |
-| `src/routes/about.tsx` | Migrar conteúdo |
-| `src/routes/contact.tsx` | Migrar form labels |
-| `src/components/Sidebar.tsx` | Migrar labels |
-| `src/components/ComicCard.tsx` | Migrar labels |
-| `package.json` | Adicionar scripts `i18n:types` e `i18n:validate`, encadear em dev/build |
+| Arquivo                         | Ação                                                                    |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| `src/routes/__root.tsx`         | Adicionar `I18nProvider`, setar `lang="pt-BR"`                          |
+| `src/components/SiteHeader.tsx` | Migrar navItems para `t()`                                              |
+| `src/components/SiteFooter.tsx` | Migrar strings para `t()`                                               |
+| `src/routes/index.tsx`          | Migrar hero, marquee, feed strings                                      |
+| `src/routes/comics.tsx`         | Migrar headers e filtros                                                |
+| `src/routes/comics.$slug.tsx`   | Migrar labels e navegação                                               |
+| `src/routes/about.tsx`          | Migrar conteúdo                                                         |
+| `src/routes/contact.tsx`        | Migrar form labels                                                      |
+| `src/components/Sidebar.tsx`    | Migrar labels                                                           |
+| `src/components/ComicCard.tsx`  | Migrar labels                                                           |
+| `package.json`                  | Adicionar scripts `i18n:types` e `i18n:validate`, encadear em dev/build |
 
 ### Arquivos Novos
-| Arquivo | Propósito |
-|---------|-----------|
-| `locales/pt-BR/*.json` (5 arquivos) | Strings de UI em português |
-| `locales/en/*.json` (5 arquivos) | Placeholders em inglês |
-| `src/i18n/context.tsx` | Provider + hook (baseado no ThemeProvider) |
-| `src/i18n/load-locale.ts` | Loader com import.meta.glob |
-| `src/i18n/index.ts` | Exports públicos |
-| `src/i18n/keys.d.ts` | Tipo auto-gerado |
-| `scripts/generate-i18n-types.ts` | Script de geração de tipos |
-| `scripts/validate-locales.ts` | Validação de paridade entre locales (CI) |
+
+| Arquivo                             | Propósito                                  |
+| ----------------------------------- | ------------------------------------------ |
+| `locales/pt-BR/*.json` (5 arquivos) | Strings de UI em português                 |
+| `locales/en/*.json` (5 arquivos)    | Placeholders em inglês                     |
+| `src/i18n/context.tsx`              | Provider + hook (baseado no ThemeProvider) |
+| `src/i18n/load-locale.ts`           | Loader com import.meta.glob                |
+| `src/i18n/index.ts`                 | Exports públicos                           |
+| `src/i18n/keys.d.ts`                | Tipo auto-gerado                           |
+| `scripts/generate-i18n-types.ts`    | Script de geração de tipos                 |
+| `scripts/validate-locales.ts`       | Validação de paridade entre locales (CI)   |
 
 ---
 

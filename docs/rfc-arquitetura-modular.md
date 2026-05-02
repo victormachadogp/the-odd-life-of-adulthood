@@ -14,7 +14,7 @@ O site hoje funciona, mas é um bloco monolítico: conteúdo, identidade, string
 
 **Problema B — AI não tem contrato pra seguir.** Quando pedimos pra uma AI gerar um layout, ela precisa saber: quais dados existem? qual a forma deles? quais strings usar? quais classes CSS existem? Hoje nada disso está documentado — a AI teria que adivinhar ou copiar do código existente.
 
-**Problema C — Qualquer mudança de identidade exige caçar strings.** Se "Inkwell" virar "Outro Nome", ou o autor mudar de "Mira Okafor" pra outro, você teria que buscar e substituir em 7+ arquivos. Dados de identidade do site estão duplicados em SiteHeader, SiteFooter, about, contact, Sidebar, __root, e comics.$slug.
+**Problema C — Qualquer mudança de identidade exige caçar strings.** Se "Inkwell" virar "Outro Nome", ou o autor mudar de "Mira Okafor" pra outro, você teria que buscar e substituir em 7+ arquivos. Dados de identidade do site estão duplicados em SiteHeader, SiteFooter, about, contact, Sidebar, \_\_root, e comics.$slug.
 
 ---
 
@@ -25,6 +25,7 @@ Antes das decisões, os conceitos que guiam tudo:
 ### 2.1 Separation of Concerns (Separação de Responsabilidades)
 
 O princípio mais fundamental. Cada "coisa" no sistema deveria ter **uma única razão pra mudar**. Hoje, `SiteHeader.tsx` muda se:
+
 - A navegação mudar (dado)
 - O nome do site mudar (identidade)
 - O label "Home" precisar virar "Início" (i18n)
@@ -32,12 +33,12 @@ O princípio mais fundamental. Cada "coisa" no sistema deveria ter **uma única 
 
 São 4 razões de mudança num único arquivo. Isso é o oposto de separation of concerns. O objetivo é que cada preocupação viva em seu próprio lugar:
 
-| Preocupação | Onde deveria viver | Razão de mudança |
-|---|---|---|
-| Quais comics existem | `content/` | Publicar/editar comic |
-| Como o site se chama, quem é o autor | `site.config.json` | Rebranding, novo autor |
-| Como strings aparecem em cada idioma | `locales/` | Tradução, ajuste de copy |
-| Como as coisas são renderizadas | `src/` (layout) | Redesign, troca de framework |
+| Preocupação                          | Onde deveria viver | Razão de mudança             |
+| ------------------------------------ | ------------------ | ---------------------------- |
+| Quais comics existem                 | `content/`         | Publicar/editar comic        |
+| Como o site se chama, quem é o autor | `site.config.json` | Rebranding, novo autor       |
+| Como strings aparecem em cada idioma | `locales/`         | Tradução, ajuste de copy     |
+| Como as coisas são renderizadas      | `src/` (layout)    | Redesign, troca de framework |
 
 ### 2.2 Dependency Inversion (Inversão de Dependência)
 
@@ -131,8 +132,16 @@ Esses módulos são **dados puros** — JSON, imagens, documentação. Não têm
   ],
   "social": [
     { "platform": "email", "handle": "hi@inkwell.studio", "url": "mailto:hi@inkwell.studio" },
-    { "platform": "instagram", "handle": "@inkwell.strips", "url": "https://instagram.com/inkwell.strips" },
-    { "platform": "twitter", "handle": "@inkwellstrips", "url": "https://twitter.com/inkwellstrips" }
+    {
+      "platform": "instagram",
+      "handle": "@inkwell.strips",
+      "url": "https://instagram.com/inkwell.strips"
+    },
+    {
+      "platform": "twitter",
+      "handle": "@inkwellstrips",
+      "url": "https://twitter.com/inkwellstrips"
+    }
   ],
   "seo": {
     "titleTemplate": "{pageTitle} — {siteName}",
@@ -172,24 +181,28 @@ Contratos também servem como **checklist de completude**. Quando trocar de fram
 # Home Page
 
 ## Dados Disponíveis
+
 - `comics: Comic[]` — todos os comics, mais recente primeiro
 - `allTags: string[]` — todas as tags únicas, ordenadas
 - `config: SiteConfig` — identidade do site, autor, navegação, social
 - `t(key, vars?)` — função de tradução
 
 ## Seções Obrigatórias
-1. Marquee — ticker com t('home.marquee.*')
-2. Hero — masthead com config.site.name, t('home.hero.*'), CTAs
+
+1. Marquee — ticker com t('home.marquee.\*')
+2. Hero — masthead com config.site.name, t('home.hero.\*'), CTAs
 3. Feed — lista filtrável de comics (busca + tag), usa ComicCard
 4. Sidebar — busca, filtro de tags, card do autor
 
 ## Chaves de Tradução Usadas
+
 home.hero.title, home.hero.subtitle, home.hero.featured,
 home.hero.cta.archive, home.hero.cta.author,
 home.marquee.newStrip, home.marquee.issue, home.marquee.inkOnly,
 home.feed.title, home.feed.noResults, home.feed.entries
 
 ## Classes CSS Disponíveis
+
 brutal-border, brutal-border-b, brutal-border-t,
 shadow-soft, shadow-panel, shadow-glow,
 transition-smooth, animate-fade-up
@@ -203,11 +216,11 @@ Tudo em `src/` é específico do framework atual e pode ser regenerado. Mas dent
 
 **O que são:** arquivos finos que traduzem dados portáveis (JSON puro) para algo que o framework atual consegue consumir. São o único ponto de acoplamento entre os mundos "portável" e "framework-específico".
 
-| Adapter | O que faz | Equivalente em Vue/Nuxt |
-|---|---|---|
-| `src/data/content-loader.ts` | Usa `import.meta.glob` do Vite pra ler `content/comics/*/comic.json`, resolve paths de imagens, exporta `comics[]`, `getComic()`, `allTags` | Nuxt Content module, ou `fs.readFileSync` em server routes |
-| `src/data/config-loader.ts` | Importa `site.config.json`, exporta tipado | Praticamente idêntico (`import config from '~/site.config.json'`) |
-| `src/i18n/context.tsx` | React context + `useTranslation()` hook, carrega JSONs de `locales/` | Vue `provide/inject` + composable `useI18n()` |
+| Adapter                      | O que faz                                                                                                                                   | Equivalente em Vue/Nuxt                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `src/data/content-loader.ts` | Usa `import.meta.glob` do Vite pra ler `content/comics/*/comic.json`, resolve paths de imagens, exporta `comics[]`, `getComic()`, `allTags` | Nuxt Content module, ou `fs.readFileSync` em server routes        |
+| `src/data/config-loader.ts`  | Importa `site.config.json`, exporta tipado                                                                                                  | Praticamente idêntico (`import config from '~/site.config.json'`) |
+| `src/i18n/context.tsx`       | React context + `useTranslation()` hook, carrega JSONs de `locales/`                                                                        | Vue `provide/inject` + composable `useI18n()`                     |
 
 **Por que não usar libraries prontas pra isso?** Trade-off consciente:
 
@@ -273,26 +286,26 @@ Isso é análogo ao conceito de **Design System** em frontend — um design syst
 
 ### 5.1 O que NÃO muda (zero esforço)
 
-| Ativo | Por que sobrevive |
-|---|---|
-| `content/` (comics JSON + imagens) | JSON puro, sem imports de módulo |
-| `locales/` (traduções) | JSON puro |
-| `site.config.json` | JSON puro |
-| `contracts/` | Documentação + tipos (TypeScript é universal) |
-| `LAYOUT_BRIEF.md` | Atualizar só a seção "Framework atual" |
-| `scripts/sync-content.mjs` | Node puro, sem dependência de framework |
-| `public/` (media estática) | Arquivos estáticos |
+| Ativo                              | Por que sobrevive                             |
+| ---------------------------------- | --------------------------------------------- |
+| `content/` (comics JSON + imagens) | JSON puro, sem imports de módulo              |
+| `locales/` (traduções)             | JSON puro                                     |
+| `site.config.json`                 | JSON puro                                     |
+| `contracts/`                       | Documentação + tipos (TypeScript é universal) |
+| `LAYOUT_BRIEF.md`                  | Atualizar só a seção "Framework atual"        |
+| `scripts/sync-content.mjs`         | Node puro, sem dependência de framework       |
+| `public/` (media estática)         | Arquivos estáticos                            |
 
 ### 5.2 O que muda
 
-| Camada | Esforço | Detalhes |
-|---|---|---|
-| **Adapters** (content-loader, config-loader, i18n) | Pequeno | ~150 linhas total. Mesma API de saída, mecanismo de loading diferente. É o custo fixo de toda troca. |
-| **Páginas e componentes** | Médio, mas AI gera | Você passa os mesmos contracts pro AI, muda "Framework: Vue/Nuxt" no brief, e AI gera. O contrato garante que nada seja esquecido. |
-| **Theme provider** | Pequeno | Mesma lógica (localStorage + CSS vars), primitiva de reatividade diferente (context → provide/inject → store) |
-| **CSS/Tailwind** | Mínimo | Tailwind funciona em qualquer framework. Copiar `styles.css` quase literalmente. |
-| **Build config** | Substituir | `vite.config.ts` → `nuxt.config.ts` ou equivalente |
-| **package.json** | Substituir dependências | Novo framework, novo router, novos deps |
+| Camada                                             | Esforço                 | Detalhes                                                                                                                           |
+| -------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Adapters** (content-loader, config-loader, i18n) | Pequeno                 | ~150 linhas total. Mesma API de saída, mecanismo de loading diferente. É o custo fixo de toda troca.                               |
+| **Páginas e componentes**                          | Médio, mas AI gera      | Você passa os mesmos contracts pro AI, muda "Framework: Vue/Nuxt" no brief, e AI gera. O contrato garante que nada seja esquecido. |
+| **Theme provider**                                 | Pequeno                 | Mesma lógica (localStorage + CSS vars), primitiva de reatividade diferente (context → provide/inject → store)                      |
+| **CSS/Tailwind**                                   | Mínimo                  | Tailwind funciona em qualquer framework. Copiar `styles.css` quase literalmente.                                                   |
+| **Build config**                                   | Substituir              | `vite.config.ts` → `nuxt.config.ts` ou equivalente                                                                                 |
+| **package.json**                                   | Substituir dependências | Novo framework, novo router, novos deps                                                                                            |
 
 ### 5.3 Avaliação honesta de esforço
 
@@ -354,33 +367,39 @@ Hoje o site usa TanStack Start que suporta SSR. Se trocar pra um framework SSR-f
 
 Módulos que podem surgir conforme o projeto cresce, mas que **não valem implementar agora**:
 
-| Módulo | Quando faria sentido | O que seria |
-|---|---|---|
+| Módulo                        | Quando faria sentido                                        | O que seria                                                            |
+| ----------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------- |
 | **Design Tokens** (`tokens/`) | Quando de fato trocar de framework e precisar regenerar CSS | Cores, tipografia, shadows em JSON → script gera CSS custom properties |
-| **Analytics config** | Quando adicionar tracking | Config de quais eventos trackear, separado do código de tracking |
-| **Forms config** | Se o formulário de contato ficar complexo | Schema do form em JSON, layout renderiza dinamicamente |
-| **Media pipeline** | Se passar de ~20 comics | Otimização de imagens automatizada, thumbnails, lazy loading |
+| **Analytics config**          | Quando adicionar tracking                                   | Config de quais eventos trackear, separado do código de tracking       |
+| **Forms config**              | Se o formulário de contato ficar complexo                   | Schema do form em JSON, layout renderiza dinamicamente                 |
+| **Media pipeline**            | Se passar de ~20 comics                                     | Otimização de imagens automatizada, thumbnails, lazy loading           |
 
 ---
 
 ## 8. Ordem de Implementação
 
 ### Fase 1: Content Separation
+
 Executar o plano existente (`docs/plano-separar-conteudo-layout.md`). Isso é pré-requisito pra tudo — é onde o princípio de dependency inversion se materializa primeiro.
 
 ### Fase 2: Site Config
+
 Criar `site.config.json` + adapter. Eliminar todas duplicatas de identidade nos componentes. Relativamente simples, alto impacto na organização.
 
 ### Fase 3: i18n
+
 Executar o plano existente (`docs/plano-i18n-modular.md`). Depende da Fase 2 porque nav labels referenciam keys do config.
 
 ### Fase 4: Contracts + Layout Brief
+
 Criar `contracts/` e `LAYOUT_BRIEF.md`. Testar pedindo pra AI regenerar uma página (about é a mais simples). Este é o ponto onde o workflow AI-first fica viável.
 
 ### Fase 5 (quando necessário): Validação automatizada
+
 Script que verifica se layouts gerados seguem os contratos (t() keys existem, imports corretos, sem strings hardcoded).
 
 ### Fase 6 (quando necessário): Design Tokens
+
 Extrair CSS custom properties pra JSON. Só vale quando for realmente trocar de framework.
 
 ---
@@ -388,6 +407,7 @@ Extrair CSS custom properties pra JSON. Só vale quando for realmente trocar de 
 ## 9. Arquivos Críticos
 
 **Existentes (a modificar):**
+
 - `src/data/comics.ts` — dado hardcoded que Fase 1 substitui
 - `src/routes/__root.tsx` — app shell com SEO/identidade hardcoded
 - `src/components/SiteHeader.tsx` — nav + identidade hardcoded (linhas 7-12, 23-29)
@@ -395,6 +415,7 @@ Extrair CSS custom properties pra JSON. Só vale quando for realmente trocar de 
 - `src/styles.css` — design tokens atuais (fonte do brief)
 
 **Novos (a criar):**
+
 - `site.config.json` — identidade centralizada
 - `contracts/types.ts` — interfaces compartilhadas
 - `contracts/pages/*.md` — specs por página
@@ -402,5 +423,6 @@ Extrair CSS custom properties pra JSON. Só vale quando for realmente trocar de 
 - `src/data/config-loader.ts` — adapter do config
 
 **Planos existentes (a executar):**
+
 - `docs/plano-separar-conteudo-layout.md` — Fase 1
 - `docs/plano-i18n-modular.md` — Fase 3

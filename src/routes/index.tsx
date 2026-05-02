@@ -1,26 +1,29 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { ArrowDown } from "lucide-react";
-import { ComicCard } from "@/components/ComicCard";
-import { Sidebar } from "@/components/Sidebar";
-import { comics } from "@/data/content-loader";
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { useMemo, useState } from 'react';
+import { ArrowDown } from 'lucide-react';
+import { ComicCard } from '@/components/ComicCard';
+import { Sidebar } from '@/components/Sidebar';
+import { comics } from '@/data/content-loader';
 
-const artBackground = "/media/art-background.png";
+const artBackground = '/media/art-background.png';
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   head: () => ({
     meta: [
-      { title: "Inkwell — Webcomics for the curious" },
-      { name: "description", content: "A weekly feed of fresh, hand-drawn webcomics. Cats, dragons, and quiet moments." },
-      { property: "og:title", content: "Inkwell — Webcomics for the curious" },
-      { property: "og:description", content: "A weekly feed of fresh, hand-drawn webcomics." },
+      { title: 'Inkwell — Webcomics for the curious' },
+      {
+        name: 'description',
+        content: 'A weekly feed of fresh, hand-drawn webcomics. Cats, dragons, and quiet moments.',
+      },
+      { property: 'og:title', content: 'Inkwell — Webcomics for the curious' },
+      { property: 'og:description', content: 'A weekly feed of fresh, hand-drawn webcomics.' },
     ],
   }),
   component: Index,
 });
 
 function Index() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [tag, setTag] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
@@ -40,7 +43,10 @@ function Index() {
       <div className="brutal-border-b overflow-hidden bg-foreground py-2 text-background">
         <div className="flex gap-8 whitespace-nowrap text-[11px] font-bold uppercase tracking-widest">
           {Array.from({ length: 12 }).map((_, i) => (
-            <span key={i} className="flex items-center gap-8">
+            <span
+              key={i}
+              className="flex items-center gap-8"
+            >
               ★ New strip every Friday
               <span className="text-primary">/</span>
               Issue №042
@@ -65,7 +71,11 @@ function Index() {
           <div className="flex items-center justify-between border-b border-background/20 py-3 text-[10px] font-bold uppercase tracking-widest text-background/50">
             <span>Vol. I — №042</span>
             <span className="hidden md:inline">A weekly catalogue of strips</span>
-            <span>{new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}</span>
+            <span>
+              {new Date()
+                .toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                .toUpperCase()}
+            </span>
           </div>
 
           {/* publication name */}
@@ -93,7 +103,7 @@ function Index() {
                 <a
                   href="#feed"
                   className="inline-flex items-center justify-between brutal-border bg-primary px-4 py-3 text-xs font-extrabold uppercase tracking-widest text-primary-foreground transition-smooth hover:-translate-y-0.5"
-                  style={{ borderColor: "var(--primary-foreground)" }}
+                  style={{ borderColor: 'var(--primary-foreground)' }}
                 >
                   Browse archive
                   <ArrowDown className="ml-4 h-4 w-4" />
@@ -111,19 +121,25 @@ function Index() {
       </section>
 
       {/* Feed + Sidebar */}
-      <section id="feed" className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16">
+      <section
+        id="feed"
+        className="mx-auto max-w-7xl px-4 py-12 md:px-6 md:py-16"
+      >
         <div className="grid gap-10 lg:grid-cols-[1fr_300px]">
           <div className="space-y-8">
             <div className="brutal-border-b flex items-end justify-between pb-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">// Section 01</p>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                  // Section 01
+                </p>
                 <h2 className="text-3xl font-extrabold uppercase tracking-tight md:text-4xl">
                   Latest strips
                 </h2>
               </div>
               <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                [{String(filtered.length).padStart(2, "0")}] {filtered.length === 1 ? "entry" : "entries"}
-                {tag ? ` · #${tag}` : ""}
+                [{String(filtered.length).padStart(2, '0')}]{' '}
+                {filtered.length === 1 ? 'entry' : 'entries'}
+                {tag ? ` · #${tag}` : ''}
               </p>
             </div>
             {filtered.length === 0 ? (
@@ -133,7 +149,11 @@ function Index() {
             ) : (
               <div className="space-y-10">
                 {filtered.map((c, i) => (
-                  <ComicCard key={c.slug} comic={c} index={i} />
+                  <ComicCard
+                    key={c.slug}
+                    comic={c}
+                    index={i}
+                  />
                 ))}
               </div>
             )}

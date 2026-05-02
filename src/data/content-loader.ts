@@ -1,8 +1,8 @@
-import type { Comic } from "./comic.types";
+import type { Comic } from './comic.types';
 
 interface ComicJson {
   title: string;
-  type?: "comic" | "art";
+  type?: 'comic' | 'art';
   date: string;
   excerpt: string;
   pages: string[];
@@ -10,13 +10,13 @@ interface ComicJson {
   readingTime?: string;
 }
 
-const modules = import.meta.glob<ComicJson>("../../content/comics/*/comic.json", {
+const modules = import.meta.glob<ComicJson>('../../content/comics/*/comic.json', {
   eager: true,
-  import: "default",
+  import: 'default',
 });
 
 function slugFromPath(path: string): string {
-  return path.split("/").at(-2)!;
+  return path.split('/').at(-2)!;
 }
 
 export const comics: Comic[] = Object.entries(modules)
@@ -26,13 +26,13 @@ export const comics: Comic[] = Object.entries(modules)
     return {
       slug,
       title: data.title,
-      type: data.type ?? "comic",
+      type: data.type ?? 'comic',
       date: data.date,
       excerpt: data.excerpt,
       pages,
       coverImage: pages[0],
       tags: data.tags,
-      readingTime: data.readingTime ?? "",
+      readingTime: data.readingTime ?? '',
     };
   })
   .sort((a, b) => b.date.localeCompare(a.date));

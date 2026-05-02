@@ -33,6 +33,7 @@ Se não pode eliminar uma fonte de variação, pelo menos torne ela observável.
 Estrutura previsível significa que qualquer pessoa (ou AI) sabe onde encontrar e onde colocar cada coisa sem perguntar.
 
 **Na prática neste projeto:**
+
 - Comics sempre em `content/comics/{slug}/comic.json`
 - Traduções sempre em `locales/{idioma}/{modulo}.json`
 - Identidade do site sempre em `site.config.json`
@@ -45,6 +46,7 @@ Estrutura previsível significa que qualquer pessoa (ou AI) sabe onde encontrar 
 Convenções eliminam micro-decisões que, acumuladas, geram divergência.
 
 **Na prática neste projeto:**
+
 - Chaves de tradução: flat com dot notation (`home.hero.title`, nunca nested)
 - Nomenclatura de arquivos: kebab-case
 - Componentes: PascalCase
@@ -58,6 +60,7 @@ Convenções eliminam micro-decisões que, acumuladas, geram divergência.
 Testes definem o comportamento aceitável do sistema. Sem testes, qualquer mudança pode quebrar algo silenciosamente.
 
 **Na prática neste projeto:**
+
 - `scripts/validate-locales.ts` — garante paridade entre idiomas (já planejado em `docs/plano-i18n-modular.md`)
 - Type checking (`tsc --noEmit`) — contratos tipados impedem dados com forma errada
 - Build check (`npm run build`) — se compila, os imports e referências existem
@@ -70,6 +73,7 @@ Testes definem o comportamento aceitável do sistema. Sem testes, qualquer mudan
 Mesmo trabalhando solo, review é o momento de perguntar: "isso segue os padrões? isso aumenta ou reduz entropia?"
 
 **Na prática neste projeto:**
+
 - Antes de commitar, verificar: dados estão fora de `src/`? Strings usam `t()`? Convenções de naming seguidas?
 - AI como reviewer: colar o diff e pedir pra validar contra os contratos e convenções
 - Usar este documento como checklist
@@ -86,13 +90,13 @@ Não precisa virar purista de Domain-Driven Design. Só precisa responder: **"qu
 
 **A regra vive onde a mudança dói menos.**
 
-| Se mudar essa regra afeta... | Ela vive em... |
-|------------------------------|----------------|
-| Como o site se identifica | `site.config.json` |
-| Como uma string aparece num idioma | `locales/` |
-| O que um comic contém | `content/` |
-| Como algo é renderizado | `src/` (layout) |
-| O contrato entre dado e layout | `contracts/` |
+| Se mudar essa regra afeta...       | Ela vive em...     |
+| ---------------------------------- | ------------------ |
+| Como o site se identifica          | `site.config.json` |
+| Como uma string aparece num idioma | `locales/`         |
+| O que um comic contém              | `content/`         |
+| Como algo é renderizado            | `src/` (layout)    |
+| O contrato entre dado e layout     | `contracts/`       |
 
 ### 3.2 Proibir duplicação silenciosa
 
@@ -150,12 +154,12 @@ Ferramentas já documentadas no projeto: Datadog (ver `docs/rfc-arquitetura-modu
 
 Mesmo com um dev só, documentar quem decide o quê evita decisões conflitantes ao longo do tempo. Os docs em `docs/` servem esse papel — cada plano define o escopo e as decisões de um domínio.
 
-| Domínio | Documento dono |
-|---------|----------------|
-| Arquitetura geral | `docs/rfc-arquitetura-modular.md` |
-| Separação conteúdo/layout | `docs/plano-separar-conteudo-layout.md` |
-| i18n | `docs/plano-i18n-modular.md` |
-| Governança e anti-entropia | Este documento |
+| Domínio                    | Documento dono                          |
+| -------------------------- | --------------------------------------- |
+| Arquitetura geral          | `docs/rfc-arquitetura-modular.md`       |
+| Separação conteúdo/layout  | `docs/plano-separar-conteudo-layout.md` |
+| i18n                       | `docs/plano-i18n-modular.md`            |
+| Governança e anti-entropia | Este documento                          |
 
 ### 5.2 Decisões explícitas
 
@@ -187,11 +191,11 @@ Antes de qualquer mudança, perguntar:
 
 ## Modelo Mental — Resumo
 
-| Regra | Aplicação |
-|-------|-----------|
-| Todo sistema tende ao caos se você não colocar limites | Padrões + convenções como limites explícitos |
+| Regra                                                    | Aplicação                                                  |
+| -------------------------------------------------------- | ---------------------------------------------------------- |
+| Todo sistema tende ao caos se você não colocar limites   | Padrões + convenções como limites explícitos               |
 | Cada nova possibilidade precisa de uma regra pra existir | Se pode ser feito de dois jeitos, escolher e documentar um |
-| Arquitetura é o ato de reduzir entropia | Cada decisão é uma restrição intencional |
-| A regra vive onde a mudança dói menos | Ownership claro por domínio |
-| Se eu não consigo observar, eu não controlo | Testes, tipos, validação, logs |
-| Sem dono, tudo vira responsabilidade de ninguém | Documentos donos por domínio |
+| Arquitetura é o ato de reduzir entropia                  | Cada decisão é uma restrição intencional                   |
+| A regra vive onde a mudança dói menos                    | Ownership claro por domínio                                |
+| Se eu não consigo observar, eu não controlo              | Testes, tipos, validação, logs                             |
+| Sem dono, tudo vira responsabilidade de ninguém          | Documentos donos por domínio                               |

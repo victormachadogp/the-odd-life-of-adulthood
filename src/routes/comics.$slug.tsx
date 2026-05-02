@@ -1,11 +1,11 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Heart, MessageCircle, Share2 } from "lucide-react";
-import { format, parseISO } from "date-fns";
-import { comics, getComic } from "@/data/content-loader";
+import { createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { ArrowLeft, Heart, MessageCircle, Share2 } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+import { comics, getComic } from '@/data/content-loader';
 
-const authorAvatar = "/media/author-avatar.jpg";
+const authorAvatar = '/media/author-avatar.jpg';
 
-export const Route = createFileRoute("/comics/$slug")({
+export const Route = createFileRoute('/comics/$slug')({
   loader: ({ params }) => {
     const comic = getComic(params.slug);
     if (!comic) throw notFound();
@@ -16,14 +16,14 @@ export const Route = createFileRoute("/comics/$slug")({
       ? {
           meta: [
             { title: `${loaderData.title} — Inkwell` },
-            { name: "description", content: loaderData.excerpt },
-            { property: "og:title", content: `${loaderData.title} — Inkwell` },
-            { property: "og:description", content: loaderData.excerpt },
-            { property: "og:image", content: loaderData.coverImage },
-            { name: "twitter:image", content: loaderData.coverImage },
+            { name: 'description', content: loaderData.excerpt },
+            { property: 'og:title', content: `${loaderData.title} — Inkwell` },
+            { property: 'og:description', content: loaderData.excerpt },
+            { property: 'og:image', content: loaderData.coverImage },
+            { name: 'twitter:image', content: loaderData.coverImage },
           ],
         }
-      : { meta: [{ title: "Comic — Inkwell" }] },
+      : { meta: [{ title: 'Comic — Inkwell' }] },
   component: ComicPage,
   notFoundComponent: () => (
     <div className="mx-auto max-w-xl px-6 py-24 text-center">
@@ -32,7 +32,10 @@ export const Route = createFileRoute("/comics/$slug")({
       <p className="mt-3 text-xs uppercase tracking-widest text-muted-foreground">
         This entry has been redacted or never existed.
       </p>
-      <Link to="/comics" className="mt-6 inline-flex items-center gap-2 brutal-border bg-foreground px-5 py-3 text-xs font-extrabold uppercase tracking-widest text-background">
+      <Link
+        to="/comics"
+        className="mt-6 inline-flex items-center gap-2 brutal-border bg-foreground px-5 py-3 text-xs font-extrabold uppercase tracking-widest text-background"
+      >
         ← Back to archive
       </Link>
     </div>
@@ -40,7 +43,9 @@ export const Route = createFileRoute("/comics/$slug")({
   errorComponent: ({ error }) => (
     <div className="mx-auto max-w-xl px-6 py-24 text-center">
       <h1 className="text-3xl font-extrabold uppercase">System error</h1>
-      <p className="mt-3 text-xs uppercase tracking-widest text-muted-foreground">{error.message}</p>
+      <p className="mt-3 text-xs uppercase tracking-widest text-muted-foreground">
+        {error.message}
+      </p>
     </div>
   ),
 });
@@ -63,13 +68,18 @@ function ComicPage() {
       {/* File header — catalog card */}
       <header className="brutal-border mb-8 bg-card">
         <div className="brutal-border-b flex items-center justify-between bg-foreground px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-background">
-          <span className="text-primary">FILE №{String(idx + 1).padStart(3, "0")}</span>
-          <span>{format(parseISO(comic.date), "MMM d, yyyy")} / {comic.readingTime}</span>
+          <span className="text-primary">FILE №{String(idx + 1).padStart(3, '0')}</span>
+          <span>
+            {format(parseISO(comic.date), 'MMM d, yyyy')} / {comic.readingTime}
+          </span>
         </div>
         <div className="space-y-4 p-6">
           <div className="flex flex-wrap items-center gap-1.5">
             {comic.tags.map((t) => (
-              <span key={t} className="brutal-border bg-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest">
+              <span
+                key={t}
+                className="brutal-border bg-background px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest"
+              >
                 #{t}
               </span>
             ))}
@@ -92,7 +102,10 @@ function ComicPage() {
       </header>
 
       {/* Comic image — vertical reading */}
-      <div className="brutal-border bg-card" style={{ boxShadow: "10px 10px 0 0 var(--ink)" }}>
+      <div
+        className="brutal-border bg-card"
+        style={{ boxShadow: '10px 10px 0 0 var(--ink)' }}
+      >
         <img
           src={comic.coverImage}
           alt={comic.title}
@@ -125,10 +138,14 @@ function ComicPage() {
       <section className="mt-12">
         <div className="brutal-border-b mb-4 flex items-end justify-between pb-3">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-primary">// Section.discuss</p>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-primary">
+              // Section.discuss
+            </p>
             <h2 className="text-2xl font-extrabold uppercase tracking-tight">Comments</h2>
           </div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">[{String(sampleComments.length).padStart(2, "0")}]</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            [{String(sampleComments.length).padStart(2, '0')}]
+          </p>
         </div>
         <form className="brutal-border bg-card p-4">
           <textarea
@@ -147,14 +164,19 @@ function ComicPage() {
 
         <ul className="mt-6 space-y-4">
           {sampleComments.map((c) => (
-            <li key={c.author} className="brutal-border bg-card p-5">
+            <li
+              key={c.author}
+              className="brutal-border bg-card p-5"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 items-center justify-center brutal-border bg-foreground text-sm font-extrabold text-background">
                   {c.author[0]}
                 </div>
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-widest">{c.author}</p>
-                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{c.when}</p>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {c.when}
+                  </p>
                 </div>
               </div>
               <p className="mt-3 text-sm text-foreground">{c.body}</p>
@@ -174,7 +196,9 @@ function ComicPage() {
             <p className="text-[10px] font-bold uppercase tracking-widest">← Prev file</p>
             <p className="mt-2 text-lg font-extrabold uppercase leading-tight">{prev.title}</p>
           </Link>
-        ) : <span />}
+        ) : (
+          <span />
+        )}
         {next ? (
           <Link
             to="/comics/$slug"
@@ -184,13 +208,19 @@ function ComicPage() {
             <p className="text-[10px] font-bold uppercase tracking-widest">Next file →</p>
             <p className="mt-2 text-lg font-extrabold uppercase leading-tight">{next.title}</p>
           </Link>
-        ) : <span />}
+        ) : (
+          <span />
+        )}
       </nav>
     </article>
   );
 }
 
 const sampleComments = [
-  { author: "Theo", when: "2 days ago", body: "This made me smile on a Monday morning. Thank you." },
-  { author: "Lin", when: "5 days ago", body: "The third panel is a whole mood. Saving forever." },
+  {
+    author: 'Theo',
+    when: '2 days ago',
+    body: 'This made me smile on a Monday morning. Thank you.',
+  },
+  { author: 'Lin', when: '5 days ago', body: 'The third panel is a whole mood. Saving forever.' },
 ];

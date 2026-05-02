@@ -1,7 +1,7 @@
-import { Link } from "@tanstack/react-router";
-import { ArrowRight, Clock } from "lucide-react";
-import { format, parseISO } from "date-fns";
-import type { Comic } from "@/data/comic.types";
+import { Link } from '@tanstack/react-router';
+import { ArrowRight, Clock } from 'lucide-react';
+import { format, parseISO } from 'date-fns';
+import type { Comic } from '@/data/comic.types';
 
 interface Props {
   comic: Comic;
@@ -14,15 +14,20 @@ export function ComicCard({ comic, index = 0 }: Props) {
       className="group animate-fade-up brutal-border bg-card transition-smooth hover:-translate-x-1 hover:-translate-y-1"
       style={{
         animationDelay: `${index * 60}ms`,
-        boxShadow: "8px 8px 0 0 var(--ink)",
+        boxShadow: '8px 8px 0 0 var(--ink)',
       }}
     >
-      <Link to="/comics/$slug" params={{ slug: comic.slug }} className="block">
+      <Link
+        to="/comics/$slug"
+        params={{ slug: comic.slug }}
+        className="block"
+      >
         {/* catalog header strip */}
         <div className="flex items-center justify-between brutal-border-b bg-background px-4 py-2 text-[10px] font-bold uppercase tracking-widest">
-          <span className="text-primary">FILE №{String(index + 1).padStart(3, "0")}</span>
+          <span className="text-primary">FILE №{String(index + 1).padStart(3, '0')}</span>
           <span className="text-foreground">
-            {format(parseISO(comic.date), "MMM d, yyyy")} · <Clock className="inline h-3 w-3" /> {comic.readingTime}
+            {format(parseISO(comic.date), 'MMM d, yyyy')} · <Clock className="inline h-3 w-3" />{' '}
+            {comic.readingTime}
           </span>
         </div>
 
@@ -35,9 +40,10 @@ export function ComicCard({ comic, index = 0 }: Props) {
               loading="lazy"
               width={768}
               height={1536}
-              className={comic.type === "art"
-                ? "w-full h-auto transition-smooth"
-                : "mx-auto block max-h-140 w-auto object-contain transition-smooth"
+              className={
+                comic.type === 'art'
+                  ? 'w-full h-auto transition-smooth'
+                  : 'mx-auto block max-h-140 w-auto object-contain transition-smooth'
               }
             />
           </div>
